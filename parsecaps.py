@@ -24,7 +24,7 @@ def showHelp():
 def main(argv): 
     inputCapFile = ''
     outFolder = ''
-    networks = False
+    showNetworks = False
 
     try:
         opts, args = getopt.getopt(argv,"ho:n",["outfolder=","networks"])
@@ -34,28 +34,26 @@ def main(argv):
         sys.exit(2)
     if len(opts) == 0: #We were given no options. Check to see if we were given a capfile
         if len(sys.argv) == 2: # We were only given a capfile
-            #print 'only capfile found: ' + sys.argv[1]
             inputCapFile = sys.argv[1]
         else:
             showHelp()
             sys.exit(2)
     for opt, arg in opts:
-        print opt, arg
         if opt == "-h":
             showHelp()
         elif opt in ("-o", "--outfolder"):
             outFolder = str(arg)
         elif opt in ("-n", "--networks"):
-            networks = True
+            showNetworks = True
         else:
             print "Unrecognized argument: " + opt
             sys.exit()
     inputCapFile = sys.argv[-1]
 
     # DEBUG
-    print 'inputCapFile: ' + inputCapFile
-    print 'outFolder: ' + outFolder
-    print 'networks: ' + str(networks)
+    # print 'inputCapFile: ' + inputCapFile
+    # print 'outFolder: ' + outFolder
+    # print 'networks: ' + str(networks)
 
 
     p = subprocess.Popen(['pyrit', '-r', inputCapFile, 'analyze'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -75,8 +73,10 @@ def main(argv):
 			mac = line[APIndex+1:APIndex+18]
 			# Get SSID of network 
 			SSID = line[line.index("('")+2:len(line)-3]
-			print mac + " - " + SSID
-			# Add the SSID and MAC address to the dictionary
+            
+            if showNetworks == True:
+                print mac + " - " + SSID
+            # Add the SSID and MAC address to the dictionary
 			networks[SSID] = mac
 			capfile = outFolder + SSID + ".cap"
 			# Run Pyrit and create a cap for the network
