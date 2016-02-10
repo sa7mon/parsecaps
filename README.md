@@ -10,6 +10,7 @@ python .\parsecaps.py
 ##Features to add:
 * -i / --input : Input file to parse
 * -o / --outFolder : Folder to save the caps to 
+* Cleanup / Optimize code
 
 ##License
 MIT
