@@ -1,4 +1,4 @@
-###############################################
+#####################################################################
 #
 # parsecaps.py - Parses wpa.cap from besside-ng and 
 # 		 creates individual .caps for each network
@@ -10,7 +10,7 @@
 # Created by: Dan Salmon
 #	@bltjack | github.com/sa7mon | https://danthesalmon.com
 # 
-##############################################
+#####################################################################
 
 #!/usr/bin/python
 import subprocess, sys, getopt
@@ -24,50 +24,68 @@ def showHelp():
 def main(argv): 
     inputCapFile = ''
     outFolder = ''
+    networks = False
+
     try:
-        opts, args = getopt.getopt(argv,"hon",["outfolder","networks"])
-    except getopt.GetoptError:
+        opts, args = getopt.getopt(argv,"ho:n",["outfolder=","networks"])
+    except getopt.GetoptError as err:
+        print 'Error: ' + str(err)
         showHelp()
         sys.exit(2)
+    if len(opts) == 0: #We were given no options. Check to see if we were given a capfile
+        if len(sys.argv) == 2: # We were only given a capfile
+            #print 'only capfile found: ' + sys.argv[1]
+            inputCapFile = sys.argv[1]
+        else:
+            showHelp()
+            sys.exit(2)
     for opt, arg in opts:
         print opt, arg
         if opt == "-h":
             showHelp()
         elif opt in ("-o", "--outfolder"):
-            print '-o argument set.'
+            outFolder = str(arg)
         elif opt in ("-n", "--networks"):
-            print '-n argument set.'
+            networks = True
         else:
             print "Unrecognized argument: " + opt
             sys.exit()
-	# p = subprocess.Popen(['pyrit', '-r', 'wpa.cap', 'analyze'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-	# grepExec = subprocess.Popen(['grep', 'AccessPoint'], stdin=p.stdout, stdout=subprocess.PIPE)
-	# out, err = grepExec.communicate()
-	# handshakeCount = 0
-	# #print "Found handshakes:\n"
-	# #print out
-	# networks = {}
+    inputCapFile = sys.argv[-1]
 
-	# for line in out.split("\n"):
-	# 	# Do something with each line.
-	# 	if (len(line) > 0):
-	# 		handshakeCount += 1
-	# 		# Get MAC address of AP
-	# 		APIndex = line.index("AccessPoint ")+11
-	# 		mac = line[APIndex+1:APIndex+18]
-	# 		# Get SSID of network 
-	# 		SSID = line[line.index("('")+2:len(line)-3]
-	# 		print mac + " - " + SSID
-	# 		# Add the SSID and MAC address to the dictionary
-	# 		networks[SSID] = mac
-	# 		capfile = SSID + ".cap"
-	# 		# Run Pyrit and create a cap for the network
-	# 		pyritExec = subprocess.Popen(['pyrit', '-r', 'wpa.cap', '-o', capfile, '-e', SSID, 'strip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-	# 		out, err = pyritExec.communicate()
-	# 		if err != "":
-	# 			print pyritExecErr
+    # DEBUG
+    print 'inputCapFile: ' + inputCapFile
+    print 'outFolder: ' + outFolder
+    print 'networks: ' + str(networks)
+
+
+    p = subprocess.Popen(['pyrit', '-r', inputCapFile, 'analyze'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    grepExec = subprocess.Popen(['grep', 'AccessPoint'], stdin=p.stdout, stdout=subprocess.PIPE)
+    out, err = grepExec.communicate()
+    handshakeCount = 0
+	#print "Found handshakes:\n"
+	#print out
+    networks = {}
+
+    for line in out.split("\n"):
+		# Do something with each line.
+		if (len(line) > 0):
+			handshakeCount += 1
+			# Get MAC address of AP
+			APIndex = line.index("AccessPoint ")+11
+			mac = line[APIndex+1:APIndex+18]
+			# Get SSID of network 
+			SSID = line[line.index("('")+2:len(line)-3]
+			print mac + " - " + SSID
+			# Add the SSID and MAC address to the dictionary
+			networks[SSID] = mac
+			capfile = outFolder + SSID + ".cap"
+			# Run Pyrit and create a cap for the network
+			pyritExec = subprocess.Popen(['pyrit', '-r', inputCapFile, '-o', capfile, '-e', SSID, 'strip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+			out, err = pyritExec.communicate()
+			if err != "":
+				print pyritExecErr
 		
-	# print "Found handshakes: " + str(handshakeCount)
+    print "Found handshakes: " + str(handshakeCount)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
