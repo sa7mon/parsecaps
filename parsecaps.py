@@ -66,24 +66,24 @@ def main(argv):
 
     for line in out.split("\n"):
 		# Do something with each line.
-		if (len(line) > 0):
-			handshakeCount += 1
+        if (len(line) > 0):
+            handshakeCount += 1
 			# Get MAC address of AP
-			APIndex = line.index("AccessPoint ")+11
-			mac = line[APIndex+1:APIndex+18]
+            APIndex = line.index("AccessPoint ")+11
+            mac = line[APIndex+1:APIndex+18]
 			# Get SSID of network 
-			SSID = line[line.index("('")+2:len(line)-3]
-            
+            SSID = line[line.index("('")+2:len(line)-3]
+
             if showNetworks == True:
                 print mac + " - " + SSID
             # Add the SSID and MAC address to the dictionary
-			networks[SSID] = mac
-			capfile = outFolder + SSID + ".cap"
+            networks[SSID] = mac
+            capfile = outFolder + SSID + ".cap"
 			# Run Pyrit and create a cap for the network
-			pyritExec = subprocess.Popen(['pyrit', '-r', inputCapFile, '-o', capfile, '-e', SSID, 'strip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-			out, err = pyritExec.communicate()
-			if err != "":
-				print pyritExecErr
+            pyritExec = subprocess.Popen(['pyrit', '-r', inputCapFile, '-o', capfile, '-e', SSID, 'strip'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+            out, err = pyritExec.communicate()
+            if err != "":
+                print pyritExecErr
 		
     print "Found handshakes: " + str(handshakeCount)
 
