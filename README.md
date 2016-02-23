@@ -1,17 +1,20 @@
 #parseCaps.py
 
-Parse wpa.cap generated from besside-ng and create individual .caps for each network with a captured handshake.
+Parse .cap files with multiple network handshakes into individual .caps for each network.
 
 ## Usage
 ```
-python .\parsecaps.py
+python .\parseCaps.py [options] capfile.cap
 ```
 
-##Features to add:
-* -i / --input : Input file to parse
-* -o / --outFolder : Folder to save the caps to 
-* Cleanup / Optimize code
+## Options
+*  -o, --outfolder : Folder to place all the cap files
+*  -n, --networks  : Output names of networks with handshakes
+
+## Example
+```
+python ./parsecaps.py --outfolder ./ --networks wpa.cap
+```
 
 ##License
 MIT
-
