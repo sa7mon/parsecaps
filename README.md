@@ -1,4 +1,4 @@
-#parseCaps.py
+# parseCaps.py
 
 Parse .cap files with multiple network handshakes into individual .caps for each network.
 
