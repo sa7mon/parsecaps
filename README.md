@@ -16,5 +16,5 @@ python .\parseCaps.py [options] capfile.cap
 python ./parsecaps.py --outfolder ./ --networks wpa.cap
 ```
 
-##License
+## License
 MIT
